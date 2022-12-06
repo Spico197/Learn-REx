@@ -1,6 +1,6 @@
 # task
 task_type: MrcTaggingTask
-task_name: bert_mrc_ner2
+task_name: bert_mrc_ner
 comment: 'bert mrc for NER, git-branch=main'
 
 # data preprocessing

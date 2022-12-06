@@ -6,7 +6,7 @@ from src.task import MrcTaggingTask
 
 
 if __name__ == "__main__":
-    os.environ["CUDA_VISIBLE_DEVICES"] = "3"
+    os.environ["CUDA_VISIBLE_DEVICES"] = ""
 
     task = MrcTaggingTask.from_taskdir("outputs/bert_mrc_ner")
 

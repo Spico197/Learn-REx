@@ -25,9 +25,10 @@ Download the dataset via `python data/download.py`.
 1. download dataset
 2. check `data/formatted/role2query.json` file
 3. change configurations in `custom.yaml`
-4. run `bash run.sh` to start
-5. try `inference.py` to make predictions
-6. try debugging via VSCode debugger (the launch file locates in `.vscode/launch.json`)
+4. run `bash run.sh` to start training
+5. change `skip_train` in `outputs/bert_mrc_ner/task_params.yaml` to `true`
+6. try `inference.py` to make predictions
+7. try debugging via VSCode debugger (the launch file locates in `.vscode/launch.json`)
 
 ## ✉️ Contact
 
