@@ -1,0 +1,35 @@
+# Learn-REx
+
+This project provides a comprehensive example for illustrating the functionalities of [REx](https://github.com/Spico197/REx).
+
+Currently, this repo contains a Named Entity Recognition task via Machine Reading Comprehension strategy.
+
+## 🌴 Dependencies
+
+- Basics
+  - torch
+  - pytorch-rex==0.1.8
+  - transformers
+
+- Recommended (for dev as in `Makefile`)
+  - formatting tools: isort, black
+  - linting: flake8
+  - testing: pytest, coverage
+
+## 💾 Data Preprocessing
+
+Download the dataset via `python data/download.py`.
+
+## 🚀 QuickStart
+
+1. download dataset
+2. check `data/formatted/role2query.json` file
+3. change configurations in `custom.yaml`
+4. run `bash run.sh` to start
+5. try `inference.py` to make predictions
+6. try debugging via VSCode debugger (the launch file locates in `.vscode/launch.json`)
+
+## ✉️ Contact
+
+If you found any problems or you have ideas to improve this project,
+feel free to contact me via [GitHub](https://github.com/Spico197/REx) issues.
