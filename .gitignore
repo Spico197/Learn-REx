@@ -138,3 +138,4 @@ data/formatted/label2id.json
 *.cache
 *.pth
 outputs/
+*.out
