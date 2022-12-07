@@ -2,10 +2,10 @@ import os
 
 # pip install datasets
 from datasets import load_dataset
-
 from rex.data.label_encoder import LabelEncoder
-# from rex.utils.build_emb import build_emb
 from rex.utils.io import dump_iterable, dump_jsonlines
+
+# from rex.utils.build_emb import build_emb
 
 cache_dir = "./data/cache"
 dump_dir = "./data/formatted"

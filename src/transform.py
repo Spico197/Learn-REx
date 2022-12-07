@@ -1,22 +1,22 @@
 from collections import defaultdict
-from typing import Iterable, List, Optional, Tuple, MutableSet, TypeVar
+from typing import Any, Iterable, List, MutableSet, Optional, Tuple, TypeVar
 
 import torch
-from transformers import BertTokenizerFast
-
-from rex.utils.io import load_json
 from rex.data.collate_fn import GeneralCollateFn
 from rex.data.transforms.base import TransformBase
-from rex.utils.tagging import get_entities_from_tag_seq
+from rex.utils.io import load_json
 from rex.utils.logging import logger
 from rex.utils.progress_bar import pbar
-
+from rex.utils.tagging import get_entities_from_tag_seq
+from transformers.models.bert.tokenization_bert_fast import BertTokenizerFast
 
 Filled = TypeVar("Filled")
 
 
 class CachedPointerTaggingTransform(TransformBase):
-    def __init__(self, max_seq_len: int, plm_dir: str, ent_type2query_filepath: str) -> None:
+    def __init__(
+        self, max_seq_len: int, plm_dir: str, ent_type2query_filepath: str
+    ) -> None:
         super().__init__()
 
         self.max_seq_len: int = max_seq_len
@@ -37,11 +37,11 @@ class CachedPointerTaggingTransform(TransformBase):
 
     def transform(
         self,
-        dataset: Iterable,
+        dataset: List[Any],
         desc: Optional[str] = "Transform",
         debug: Optional[bool] = False,
         disable_pbar: Optional[bool] = False,
-        **kwargs
+        **kwargs,
     ) -> Iterable:
         final_data = []
         if debug:
@@ -78,7 +78,9 @@ class CachedPointerTaggingTransform(TransformBase):
         logger.info(f"#ins: {len(final_data)}")
         return final_data
 
-    def build_ins(self, ent_type: str, tokens: List[str], ents: MutableSet[Tuple]) -> Tuple:
+    def build_ins(
+        self, ent_type: str, tokens: List[str], ents: MutableSet[Tuple]
+    ) -> Tuple:
         query = self.ent_type2query[ent_type]
         query_tokens = self.tokenizer.tokenize(query)
 
@@ -115,8 +117,10 @@ class CachedPointerTaggingTransform(TransformBase):
 
         start_labels[0] = start_labels[-1] = -100
         end_labels[0] = end_labels[-1] = -100
-        start_labels[1:1 + len(query_tokens)] = [-100] * len(query_tokens)
-        end_labels[1:1 + len(query_tokens)] = [-100] * len(query_tokens)
+        start_labels[1 : 1 + len(query_tokens)] = [-100] * len(
+            query_tokens
+        )  # noqa: E203
+        end_labels[1 : 1 + len(query_tokens)] = [-100] * len(query_tokens)  # noqa: E203
 
         return cat_tokens, input_ids, mask, start_labels, end_labels, ent_offset
 

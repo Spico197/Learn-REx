@@ -9,12 +9,11 @@ from rex.data.dataset import CachedDataset
 from rex.tasks.simple_metric_task import SimpleMetricTask
 from rex.utils.io import load_jsonlines
 from rex.utils.registry import register
-from rex.utils.batch import decompose_batch_into_instances
-from transformers import get_linear_schedule_with_warmup
+from transformers.optimization import get_linear_schedule_with_warmup
 
+from .metric import MrcNERMetric
 from .model import PlmMRCModel
 from .transform import CachedPointerTaggingTransform
-from .metric import MrcNERMetric
 
 
 @register("task")
@@ -88,7 +87,7 @@ class MrcTaggingTask(SimpleMetricTask):
         text_ids = sorted(list({ins["id"] for ins in raw_dataset}))
         loader = self.data_manager.prepare_loader(raw_dataset)
         # to prepare input device
-        loader = accelerator.prepare(loader)
+        loader = accelerator.prepare_data_loader(loader)
         id2ents = defaultdict(set)
         for batch in loader:
             batch_out = self.model(**batch, decode=True)

@@ -1,21 +1,18 @@
-from omegaconf import DictConfig
-
 import numpy as np
+from omegaconf import DictConfig
 from rex.utils.config import ConfigParser
-from rex.utils.logging import logger
 from rex.utils.dict import get_dict_content
+from rex.utils.logging import logger
 
 from src.task import MrcTaggingTask
 
-
 if __name__ == "__main__":
-    config: DictConfig = ConfigParser.parse_cmd(cmd_args=["-dc", "custom.yaml"])
-    config.final_eval_on_test = False
-
     losses = []
     metric_results = []
 
     for random_seed in [17, 127, 1227, 12227, 122227]:
+        config: DictConfig = ConfigParser.parse_cmd(cmd_args=["-dc", "custom.yaml"])
+        config.final_eval_on_test = False
         config.random_seed = random_seed
         config.task_name += f"_{random_seed}"
 
@@ -40,4 +37,6 @@ if __name__ == "__main__":
     logger.info(f"losses: {losses}")
     logger.info(f"losses - mean: {np.mean(losses)}, std: {np.std(losses)}")
     logger.info(f"metric_results: {metric_results}")
-    logger.info(f"metric_results - mean: {np.mean(metric_results)}, std: {np.std(metric_results)}")
+    logger.info(
+        f"metric_results - mean: {np.mean(metric_results)}, std: {np.std(metric_results)}"
+    )

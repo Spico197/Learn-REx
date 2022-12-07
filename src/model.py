@@ -8,11 +8,7 @@ from src.utils import extract_positions_from_start_end_label
 
 
 class PlmMRCModel(nn.Module):
-    def __init__(
-        self,
-        plm_dir: str,
-        dropout: Optional[float] = 0.5
-    ):
+    def __init__(self, plm_dir: str, dropout: Optional[float] = 0.5):
         super().__init__()
 
         self.plm = BertModel.from_pretrained(plm_dir)
@@ -33,7 +29,9 @@ class PlmMRCModel(nn.Module):
         )
         return plm_outputs.last_hidden_state
 
-    def forward(self, input_ids, mask, start_labels=None, end_labels=None, decode=True, **kwargs):
+    def forward(
+        self, input_ids, mask, start_labels=None, end_labels=None, decode=True, **kwargs
+    ):
         hidden = self.input_encoding(input_ids, mask)
         hidden = self.dropout(hidden)
         start_logits = self.start_dense(hidden)
@@ -56,23 +54,33 @@ class PlmMRCModel(nn.Module):
     def decode(self, start_logits, end_logits, mask, **kwargs):
         dtype = start_logits.dtype
         slogits = start_logits.detach()
-        slogits[..., 1] = slogits[..., 1].masked_fill(mask.ne(3), torch.finfo(dtype).min)
+        slogits[..., 1] = slogits[..., 1].masked_fill(
+            mask.ne(3), torch.finfo(dtype).min
+        )
         elogits = end_logits.detach()
-        elogits[..., 1] = elogits[..., 1].masked_fill(mask.ne(3), torch.finfo(dtype).min)
+        elogits[..., 1] = elogits[..., 1].masked_fill(
+            mask.ne(3), torch.finfo(dtype).min
+        )
 
         start_pred = slogits.max(dim=-1)[1]
         end_pred = elogits.max(dim=-1)[1]
 
         batch_preds = []
-        for start_idxes, end_idxes, raw_tokens, ent_type, ent_offset in zip(start_pred, end_pred, kwargs["raw_tokens"], kwargs["ent_type"], kwargs["ent_offset"]):
+        for start_idxes, end_idxes, raw_tokens, ent_type, ent_offset in zip(
+            start_pred,
+            end_pred,
+            kwargs["raw_tokens"],
+            kwargs["ent_type"],
+            kwargs["ent_offset"],
+        ):
             pred_ents = []
-            positions = extract_positions_from_start_end_label(
-                start_idxes, end_idxes
-            )
+            positions = extract_positions_from_start_end_label(start_idxes, end_idxes)
             for s, e in positions:
                 new_s = s - ent_offset
                 new_e = e - ent_offset + 1
-                pred_ents.append(("".join(raw_tokens[new_s: new_e]), ent_type, (new_s, new_e)))
+                pred_ents.append(
+                    ("".join(raw_tokens[new_s:new_e]), ent_type, (new_s, new_e))
+                )
             batch_preds.append(pred_ents)
 
         return batch_preds
